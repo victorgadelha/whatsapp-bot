@@ -1,159 +1,118 @@
 {
-  "id": "4efe1d22-d60f-4414-af4c-c1e997c323b6",
-  "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "7",
-  "dialect": "postgresql",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "6",
+  "dialect": "sqlite",
   "tables": {
-    "public.conversations": {
+    "conversations": {
       "name": "conversations",
-      "schema": "",
       "columns": {
         "id": {
+          "autoincrement": true,
           "name": "id",
-          "type": "uuid",
+          "type": "integer",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": false
         },
         "whatsapp_chat_id": {
+          "autoincrement": false,
           "name": "whatsapp_chat_id",
-          "type": "varchar(100)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "title": {
+          "autoincrement": false,
           "name": "title",
-          "type": "varchar(300)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "is_group": {
+          "default": 0,
+          "autoincrement": false,
           "name": "is_group",
-          "type": "boolean",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "default": false
+          "notNull": false
         },
         "created_at": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
           "name": "created_at",
-          "type": "timestamp",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
         }
       },
+      "compositePrimaryKeys": {},
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
+      "checkConstraints": {}
     },
-    "public.embeddings": {
-      "name": "embeddings",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "message_id": {
-          "name": "message_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "model": {
-          "name": "model",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "embedding": {
-          "name": "embedding",
-          "type": "vector(1536)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "embeddings_message_id_messages_id_fk": {
-          "name": "embeddings_message_id_messages_id_fk",
-          "tableFrom": "embeddings",
-          "tableTo": "messages",
-          "columnsFrom": [
-            "message_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.messages": {
+    "messages": {
       "name": "messages",
-      "schema": "",
       "columns": {
         "id": {
+          "autoincrement": true,
           "name": "id",
-          "type": "uuid",
+          "type": "integer",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": false
         },
         "conversation_id": {
+          "autoincrement": false,
           "name": "conversation_id",
-          "type": "uuid",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "author": {
+          "autoincrement": false,
           "name": "author",
-          "type": "varchar(50)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "from_me": {
+          "autoincrement": false,
           "name": "from_me",
-          "type": "boolean",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "default": false
+          "notNull": true
         },
         "body": {
+          "autoincrement": false,
           "name": "body",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "timestamp": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
           "name": "timestamp",
-          "type": "timestamp",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
+        },
+        "embedding": {
+          "autoincrement": false,
+          "name": "embedding",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
         }
       },
-      "indexes": {},
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "message_index": {
+          "name": "message_index",
+          "columns": [],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "messages_conversation_id_conversations_id_fk": {
           "name": "messages_conversation_id_conversations_id_fk",
@@ -169,22 +128,47 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
+      "checkConstraints": {}
+    },
+    "message_index_shadow": {
+      "name": "message_index_shadow",
+      "columns": {
+        "index_key": {
+          "autoincrement": false,
+          "name": "index_key",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "data": {
+          "autoincrement": false,
+          "name": "data",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "message_index_shadow_idx": {
+          "name": "message_index_shadow_idx",
+          "columns": [
+            "index_key"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
-  "enums": {},
-  "schemas": {},
-  "sequences": {},
-  "roles": {},
-  "policies": {},
   "views": {},
+  "enums": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
+    "tables": {},
+    "columns": {}
   }
 }
