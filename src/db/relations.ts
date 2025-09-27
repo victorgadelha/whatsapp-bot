@@ -1,13 +1,13 @@
 import { relations } from "drizzle-orm/relations";
-import { conversations, messages } from "./schema";
+import { chats, messages } from "./schema";
 
 export const messagesRelations = relations(messages, ({ one }) => ({
-  conversation: one(conversations, {
-    fields: [messages.conversationId],
-    references: [conversations.id],
+  conversation: one(chats, {
+    fields: [messages.chatId],
+    references: [chats.id],
   }),
 }));
 
-export const conversationsRelations = relations(conversations, ({ many }) => ({
+export const conversationsRelations = relations(chats, ({ many }) => ({
   messages: many(messages),
 }));

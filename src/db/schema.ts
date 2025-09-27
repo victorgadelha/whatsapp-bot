@@ -1,6 +1,5 @@
 import {
   sqliteTable,
-  AnySQLiteColumn,
   integer,
   text,
   index,
@@ -10,25 +9,30 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
-export const conversations = sqliteTable("conversations", {
+export const chats = sqliteTable("chats", {
   id: integer().primaryKey({ autoIncrement: true }),
   whatsappChatId: text("whatsapp_chat_id").notNull(),
   title: text(),
   isGroup: integer("is_group").default(0),
-  createdAt: text("created_at").default("sql`(CURRENT_TIMESTAMP)`").notNull(),
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });
 
 export const messages = sqliteTable(
   "messages",
   {
     id: integer().primaryKey({ autoIncrement: true }),
-    conversationId: integer("conversation_id")
+    chatId: integer("chat_id")
       .notNull()
-      .references(() => conversations.id),
+      .references(() => chats.id),
     author: text(),
     fromMe: integer("from_me").notNull(),
     body: text(),
-    timestamp: text().default("sql`(CURRENT_TIMESTAMP)`").notNull(),
+    createdAt: text("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    timestamp: text().notNull(),
     embedding: numeric().notNull(),
   },
   (table) => [index("message_index").on(table.embedding)]
